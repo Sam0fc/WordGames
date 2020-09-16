@@ -27,10 +27,12 @@ def doLoseGame(playerId):
 
 def doChallenge(gameString, wordList):
 	for word in wordList:
-		if word[:(len(gameString))] == gameString:
+		print("Challenge checking " + word)
+		if word[0:(len(gameString))] == gameString:
 			return False
 		else:
-			return True
+			print(word[0:(len(gameString))])
+	return True
 
 def doSetup():
 	return input("Enter Player 1 Name: "), input("Enter Player 2 Name: ")
@@ -42,24 +44,31 @@ def checkWord(word):
 	return False
 
 def doBotTurn(gameString, wordList, playerOne, playerTwo):
+	print("Bot Turn Start")
 	possWords = []
 	letterScores = dict()
 	if doChallenge(gameString,wordList):
 		doLoseGame(playerTwo)
 		return ""
+	print("Challenge Complete")
 	for word in wordList:
 		if len(gameString) != 0 and word[:(len(gameString))] == gameString:
 			possWords.append(word)
+			print(word + " is a possibility")
 	for word in possWords:
-		found = word[len(gameString)]
-		if found in letterScores:
-			letterScores[found] += getWordValue(word, gameString, wordList)
-		else:
-			letterScores[found] = getWordValue(word, gameString, wordList)
-	for letter in list(string.ascii_lowercase):
-		currentMaxLetter = "a"
-		if letterScores[letter] > letterScores[currentMaxLetter]:
+		if len(word)>len(gameString):
+			found = word[len(gameString)]
+			print(found + " being checked")
+			if found in letterScores:
+				letterScores[found] += getWordValue(word, gameString, possWords)
+			else:
+				letterScores[found] = getWordValue(word, gameString, possWords)
+
+	for letter in list(string.ascii_uppercase):
+		currentMaxLetter = "D"
+		if currentMaxLetter not in letterScores or (letter in letterScores and letterScores[letter] > letterScores[currentMaxLetter]):
 			currentMaxLetter = letter
+	print (letterScores)
 	gameString = doTurn(gameString, word, playerOne, playerTwo, currentMaxLetter.upper())
 	print(gameString)
 	return gameString
